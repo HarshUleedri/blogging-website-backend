@@ -8,8 +8,12 @@ const cors = require("cors");
 var indexRouter = require("./routes/index");
 var usersRouter = require("./routes/users");
 const connectDB = require("./config/db");
-const blogRouter = require("./routes/blogRoutes");
+const blogRouter = require("./routes/BlogsRoutes/blogRoutes");
 const registerRouter = require("./routes/authRoutes");
+const UserBookmarkRouter = require("./routes/UserBookmarkRoutes/UserBookmarkRoutes");
+const UserReactionRouter = require("./routes/UserReactionsRouters/UserReactionsRouters");
+const UserComments = require("./routes/UserComments/UserComments");
+const authMiddleware = require("./middleware/authMiddleware");
 
 var app = express();
 
@@ -27,5 +31,8 @@ app.use("/", indexRouter);
 app.use("/users", usersRouter);
 app.use("/api/blogs", blogRouter);
 app.use("/api", registerRouter);
+app.use("/api/blog", UserBookmarkRouter);
+app.use("/api/blog", UserReactionRouter);
+app.use("/api/comments", UserComments);
 
 module.exports = app;

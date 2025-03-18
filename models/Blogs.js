@@ -3,8 +3,15 @@ const mongoose = require("mongoose");
 const blogSchema = mongoose.Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
-  author: { type: String, required: true },
+  author: { type: mongoose.Schema.ObjectId, ref: "users" },
+  coverImage: { type: String, default: "" },
   slug: { type: String, unique: true },
+  reactions: {
+    like: { type: Number, default: 0 },
+    clap: { type: Number, default: 0 },
+    explodingHead: { type: Number, default: 0 },
+  },
+  userReacted: [{ userId: mongoose.Schema.ObjectId, reactionType: String }],
   createdAt: { type: Date, default: Date.now },
 });
 

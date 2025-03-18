@@ -9,14 +9,15 @@ exports.login = async (req, res) => {
   try {
     const user = await User.findOne({ username });
 
-    if (!user) return res.status(400).json({ message: "username is invalid" });
+    if (!user)
+      return res.status(400).json({ message: "username does not exist" });
 
     const isPasswordMatch = await bcrypt.compare(password, user.password);
     if (!isPasswordMatch)
       return res.status(400).json({ message: "Password is incorrect" });
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "2h",
     });
     res.status(200).json({ token });
   } catch (err) {
