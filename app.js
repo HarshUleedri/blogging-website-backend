@@ -13,6 +13,9 @@ const registerRouter = require("./routes/authRoutes");
 const UserBookmarkRouter = require("./routes/UserBookmarkRoutes/UserBookmarkRoutes");
 const UserReactionRouter = require("./routes/UserReactionsRouters/UserReactionsRouters");
 const UserComments = require("./routes/UserComments/UserComments");
+const UserCommentsReaction = require("./routes/UserComments/UserCommentsReaction");
+const uploadImage = require("./routes/UploadImageRoutes/UploadImageRoute");
+const uploadCoverImage = require("./routes/UploadImageRoutes/UploadCoverImageRoute");
 const authMiddleware = require("./middleware/authMiddleware");
 
 var app = express();
@@ -23,7 +26,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.json());
+
+app.use("/uploads", express.static("uploads"));
 
 connectDB();
 
@@ -34,5 +38,8 @@ app.use("/api", registerRouter);
 app.use("/api/blog", UserBookmarkRouter);
 app.use("/api/blog", UserReactionRouter);
 app.use("/api/comments", UserComments);
+app.use("/api/comments/reaction", UserCommentsReaction);
+app.use("/api/upload/image", uploadImage);
+app.use("/api/upload/cover-image", uploadCoverImage);
 
 module.exports = app;

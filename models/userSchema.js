@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const userSchema = mongoose.Schema(
   {
     username: { type: String, required: true },
+    ProfileImage: { type: String, default: "" },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     bookmarks: [{ type: mongoose.Schema.ObjectId, ref: "Blog" }],
@@ -18,4 +19,4 @@ userSchema.pre("save", async function (next) {
   next(); // Proceed to save
 });
 
-module.exports = mongoose.model("users", userSchema);
+module.exports = mongoose.model("User", userSchema);

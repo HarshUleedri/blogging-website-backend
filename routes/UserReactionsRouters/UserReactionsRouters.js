@@ -54,7 +54,6 @@ router.post("/:slug/reaction", authMiddleware, async (req, res) => {
   }
 });
 
-
 router.get("/:slug/reactions", async (req, res) => {
   try {
     const { slug } = req.params;

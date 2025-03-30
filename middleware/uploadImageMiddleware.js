@@ -2,21 +2,20 @@ const multer = require("multer");
 const { v4: uuidv4 } = require("uuid");
 const path = require("path");
 
-
 const allowedExtensions = [".jpg", ".jpeg", ".png", ".webp"];
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "./uploads/blog-cover-image");
+  destination: function (req, file, cd) {
+    cd(null, "./uploads/images");
   },
-  filename: function (req, file, cb) {
+  filename: function (req, file, cd) {
     const uniqueName = uuidv4() + path.extname(file.originalname);
-    cb(null, uniqueName);
+    cd(null, uniqueName);
   },
 });
 
 const fileFilter = (req, file, cd) => {
-  const extensionName = path.extname(file.originalname).toLowerCase();
+  const extensionName = path.extname(file.originalname);
 
   if (allowedExtensions.includes(extensionName)) {
     cd(null, true);
@@ -31,8 +30,8 @@ const fileFilter = (req, file, cd) => {
 };
 
 const upload = multer({
-  storage: storage,
-  fileFilter: fileFilter,
+  storage,
+  fileFilter,
 });
 
 module.exports = upload;

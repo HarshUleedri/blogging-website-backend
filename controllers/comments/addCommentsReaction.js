@@ -5,17 +5,23 @@ const User = require("../../models/userSchema");
 exports.addCommentReaction = async (req, res) => {
   try {
     const { commentId } = req.params;
+    console.log(commentId);
     const { reactionType } = req.body;
+    console.log(reactionType);
     const { id } = req.user;
 
-    if (!id) return res.status(404).json({ message: "User Id Not Found " });
+    if (!id) return res.status(400).json({ message: "Id Is Required " });
 
     const user = await User.findOne({ _id: id });
+    console.log(user);
 
     if (!commentId)
-      return res.status(404).json({ message: "Comment Id Not Found " });
+      return res.status(400).json({ message: "Comment Id Is Require " });
 
     const comment = await Comments.findOne({ _id: commentId });
+    if (!comment) {
+      return res.status(404).json({ message: "Comment is Not Found" });
+    }
 
     const userReacted = comment.userReacted.find(
       (userReaction) => userReaction._id.toString() === user._id.toString()
@@ -46,4 +52,3 @@ exports.addCommentReaction = async (req, res) => {
     res.status(500).json({ message: "server error" });
   }
 };
-

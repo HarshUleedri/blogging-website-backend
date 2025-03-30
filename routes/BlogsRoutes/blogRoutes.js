@@ -7,43 +7,61 @@ const User = require("../../models/userSchema");
 
 const Blog = require("../../models/Blogs");
 
-router.post(
-  "/",
-  authMiddleware,
-  upload.single("coverImage"),
-  async (req, res) => {
-    const { title, content } = req.body;
-    const { id } = req.user;
+router.post("/", authMiddleware, async (req, res) => {
+  const { title, content, tags, publish, imageUrl } = req.body;
+  const { id } = req.user;
 
-    const user = await User.findOne({ _id: id });
+  if (!id) return res.status(404).json({ message: "User Id Not Found " });
 
-    let imageUrl;
+  const user = await User.findOne({ _id: id });
 
-    if (req.file) {
-      imageUrl = `${req.protocol}://${req.get(
-        "host"
-      )}/uploads/blog-cover-image/${req.file.filename}`;
-    } else {
-      imageUrl = "";
+  if (!user) return res.status(404).json({ message: "User  Not Found " });
+
+  //For Tags
+
+  const processedTags = tags
+    ? [
+        ...new Set(
+          tags.map((item) => ({
+            tag: item.tag.toLowerCase().trim(),
+            color: item.color,
+          }))
+        ),
+      ]
+    : [];
+  try {
+    const newBlog = new Blog({
+      title: title,
+      content: content,
+      coverImage: imageUrl,
+      tags: processedTags,
+      published: publish ?? false,
+      author: user._id,
+    });
+    await newBlog.save();
+    if (publish) {
+      setTimeout(() => {
+        res
+          .status(200)
+          .json({ message: "successfully Publish", blog: newBlog });
+      }, 2000);
+      return;
     }
-
-    try {
-      const newBlog = new Blog({
-        title: title,
-        content: content,
-        coverImage: imageUrl,
-        author: id,
-      });
-      await newBlog.save();
-      res.status(200).json(newBlog);
-    } catch (error) {
-      res.status(500).json({ message: "error creating blog", error });
-    }
+    return res
+      .status(200)
+      .json({ message: "successfully Draft ", blog: newBlog });
+  } catch (error) {
+    console.error("Error creating blog:", error); // Logs full error details
+    res
+      .status(500)
+      .json({ message: "Error creating blog", error: error.message });
   }
-);
+});
 router.get("/", async (req, res) => {
   try {
-    const allBlogs = await Blog.find().populate("author");
+    const allBlogs = await Blog.find({ published: true })
+      .sort({ createdAt: -1 })
+      .populate("author");
     if (!allBlogs) {
       return res.status(404).json({ message: "blog not found" });
     }
@@ -55,10 +73,15 @@ router.get("/", async (req, res) => {
 router.get("/:slug", async (req, res) => {
   try {
     const { slug } = req.params;
-    const singleBlog = await Blog.findOne({ slug }).populate("author");
+    const singleBlog = await Blog.findOneAndUpdate(
+      { slug },
+      { $inc: { views: 1 } },
+      { new: true }
+    ).populate("author");
     if (!singleBlog) {
       return res.status(404).json({ message: "Blog not found" });
     }
+
     res.status(200).json(singleBlog);
   } catch (error) {
     res.status(500).json({ message: "error reading blogs", error });

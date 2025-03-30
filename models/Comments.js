@@ -1,13 +1,12 @@
-const { default: mongoose } = require("mongoose");
-const moongoose = require("mongoose");
+const mongoose = require("mongoose");
 
-const comments = moongoose.Schema(
+const comments = mongoose.Schema(
   {
-    blogId: { type: moongoose.Schema.ObjectId, ref: "Blog" },
-    userId: { type: moongoose.Schema.ObjectId, ref: "users" },
+    blogId: { type: mongoose.Schema.ObjectId, ref: "Blog" },
+    userId: { type: mongoose.Schema.ObjectId, ref: "User" },
     text: { type: String, require: true },
     parentId: {
-      type: moongoose.Schema.ObjectId,
+      type: mongoose.Schema.ObjectId,
       ref: "comments",
       default: null,
     },

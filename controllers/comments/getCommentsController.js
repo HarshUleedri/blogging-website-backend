@@ -1,4 +1,5 @@
 const Comments = require("../../models/Comments");
+const Blog = require("../../models/Blogs");
 
 exports.getComments = async (req, res) => {
   try {
@@ -6,7 +7,9 @@ exports.getComments = async (req, res) => {
 
     if (!blogId) return res.status(404).json({ message: "Blog Not found" });
 
-    const comments = await Comments.find({ slug: blogId }).populate(
+    const blog = await Blog.findOne({ slug: blogId });
+
+    const comments = await Comments.find({ blogId: blog._id }).populate(
       "userId",
       "username"
     );
@@ -28,12 +31,13 @@ exports.getComments = async (req, res) => {
           commentsMap[comment.parentId].replies.push(commentsMap[comment._id]);
         }
       } else {
-        topLevelComments.push(commentsMap[comment._id]);
+        topLevelComments.unshift(commentsMap[comment._id]);
       }
     });
 
     res.status(200).json({ topLevelComments });
   } catch (err) {
+    console.log(err);
     res.status(500).json({ message: " server error" });
   }
 };
