@@ -5,15 +5,15 @@ const User = require("../../models/userSchema");
 exports.addCommentReaction = async (req, res) => {
   try {
     const { commentId } = req.params;
-    console.log(commentId);
+
     const { reactionType } = req.body;
-    console.log(reactionType);
+
     const { id } = req.user;
 
     if (!id) return res.status(400).json({ message: "Id Is Required " });
 
     const user = await User.findOne({ _id: id });
-    console.log(user);
+
 
     if (!commentId)
       return res.status(400).json({ message: "Comment Id Is Require " });

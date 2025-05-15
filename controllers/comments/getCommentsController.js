@@ -11,7 +11,7 @@ exports.getComments = async (req, res) => {
 
     const comments = await Comments.find({ blogId: blog._id }).populate(
       "userId",
-      "username"
+      "username profileImage"
     );
 
     if (!comments)

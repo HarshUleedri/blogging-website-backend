@@ -4,12 +4,19 @@ const bcrypt = require("bcryptjs");
 const userSchema = mongoose.Schema(
   {
     username: { type: String, required: true },
-    ProfileImage: { type: String, default: "" },
+    name: { type: String, default: "" },
+    bio: { type: String, default: "" },
+    location: { type: String, default: "" },
+    skills: { type: String, default: "" },
+    profileImage: { type: String, default: "" },
+    brandColor: { type: String, default: "#000000" },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     bookmarks: [{ type: mongoose.Schema.ObjectId, ref: "Blog" }],
+    followers: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
+    following: [{ type: mongoose.Schema.ObjectId, ref: "User" }],
   },
-  { timestamp: true }
+  { timestamps: true }
 );
 
 userSchema.pre("save", async function (next) {

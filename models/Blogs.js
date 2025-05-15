@@ -12,13 +12,26 @@ const blogSchema = mongoose.Schema({
       color: { type: String, trim: true },
     },
   ],
+  viewsLog: [
+    {
+      userId: { type: mongoose.Schema.ObjectId, ref: "User", default: null },
+      viewedAt: { type: Date, default: Date.now },
+      ip: { type: String, default: null },
+    },
+  ],
   views: { type: Number, default: 0 },
   reactions: {
     like: { type: Number, default: 0 },
     clap: { type: Number, default: 0 },
     explodingHead: { type: Number, default: 0 },
   },
-  userReacted: [{ userId: mongoose.Schema.ObjectId, reactionType: String }],
+  userReacted: [
+    {
+      userId: mongoose.Schema.ObjectId,
+      reactionType: String,
+      reactedAt: { type: Date, default: Date.now },
+    },
+  ],
   published: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
 });
@@ -47,6 +60,12 @@ blogSchema.pre("save", async function (next) {
   this.slug = await generateSlug(this.title);
   next();
 });
+
+blogSchema.index({
+  title: "text",
+  tags: "text",
+});
+blogSchema.index({ published: 1 });
 
 const Blog = mongoose.model("Blog", blogSchema);
 
