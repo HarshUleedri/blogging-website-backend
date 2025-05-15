@@ -46,7 +46,6 @@ router.post("/", authMiddleware, async (req, res) => {
 
     if (publish) {
       res.status(200).json({ message: "successfully Publish", blog: newBlog });
-      
     }
     return res
       .status(200)
@@ -120,8 +119,6 @@ router.get("/:slug", async (req, res) => {
 router.put("/:slug", authMiddleware, async (req, res) => {
   const { slug } = req.params;
   const { title, content, tags, publish, coverImage } = req.body;
-  console.log(slug);
-  console.log(req.body);
 
   if (!slug) return res.status(400).json({ message: "Slug Required" });
 
