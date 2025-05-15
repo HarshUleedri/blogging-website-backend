@@ -1,6 +1,6 @@
 const express = require("express");
-const { getUserFollowers } = require("../../controllers/Userfollow/UserFollow");
 const authMiddleware = require("../../middleware/authMiddleware");
+const { getUserFollowers } = require("../../controllers/userfollow/userFollow");
 const router = express.Router();
 
 router.get("/", authMiddleware, getUserFollowers);
